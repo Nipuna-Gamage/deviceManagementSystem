@@ -13,25 +13,26 @@ class DeviceController extends Controller
 
     public function register()
     {
-        // Implement register logic
         return view('register');
+    }
+
+    public function store(Request $request)
+    {
+        // Validation and storing logic here
     }
 
     public function update()
     {
-        // Implement update logic
-        return view('update');
+        // Update logic here
     }
 
     public function check()
     {
-        // Implement check logic
-        return view('check');
+        // Check logic here
     }
 
     public function delete()
     {
-        // Implement delete logic
-        return view('delete');
+        // Delete logic here
     }
 }
