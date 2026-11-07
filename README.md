@@ -83,3 +83,35 @@ For local development, run `npm run dev` alongside the Laravel development serve
 ### Next phase
 
 Phase 2 will add the MySQL device schema, Eloquent models, validated create/update/delete workflows, and real dashboard queries. The registration screen is intentionally preview-only until those backend workflows are implemented.
+
+## Phase 2 — MySQL device inventory
+
+The device inventory now supports database-backed registration, listing, searching, filtering, viewing, editing and deleting.
+
+### Configure MySQL
+
+1. Create a MySQL database named `assetflow` (or choose another name).
+2. Copy `.env.example` to `.env` if you do not already have an `.env` file.
+3. Set `DB_CONNECTION=mysql`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME` and `DB_PASSWORD` in `.env` to match your local MySQL account. Never commit `.env`.
+4. Run:
+
+```bash
+php artisan key:generate
+php artisan migrate
+npm install
+npm run build
+php artisan serve
+```
+
+### Device inventory features
+
+- Unique serial number validation.
+- Automatically generated asset tags (`AST-00001`, etc.).
+- Category, status and text search filters.
+- Pagination, device detail, edit and delete workflows.
+- Purchase date, warranty expiry, condition and notes fields.
+- Dashboard totals and recent devices read from the database.
+
+### Tests
+
+Run `php artisan test` after installing Composer dependencies. Feature tests cover inventory loading, registration, serial number uniqueness, updates and deletion.
