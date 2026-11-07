@@ -1,145 +1,160 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# AssetFlow
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+AssetFlow is a Laravel-based device and asset management system. It provides a
+central workspace for registering devices, managing employees and departments,
+assigning devices, and tracking device returns.
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Dashboard with live inventory totals
+- Device registration, listing, search, filtering, details, editing, and deletion
+- Automatic asset tags in the format `AST-00001`
+- Device status and condition tracking
+- Purchase date, warranty expiry, and notes
+- Employee and department management
+- Device assignment and return workflow
+- Assignment history with handover and return details
+- Responsive interface powered by Laravel Blade and Vite
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Requirements
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- PHP 8.2 or newer
+- Composer
+- Node.js and npm
+- MySQL or MariaDB
 
-## Learning Laravel
+For Windows development, XAMPP can be used to provide PHP and MySQL.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Installation
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Clone or download the project, then open PowerShell in the project directory:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-
-## AssetFlow redesign — Phase 1
-
-The first redesign phase introduces a responsive AssetFlow workspace shell, navigation, dashboard preview, and device-registration screen. Dashboard metrics and recent-device rows are illustrative sample content only; they are not read from the database yet.
-
-### Frontend assets
-
-Install the frontend dependencies and build the Vite assets:
-
-```bash
-npm install
-npm run build
+```powershell
+cd C:\path\to\deviceManagementSystem
 ```
 
-For local development, run `npm run dev` alongside the Laravel development server.
+Install the backend dependencies:
 
-### Next phase
+```powershell
+composer install
+```
 
-Phase 2 will add the MySQL device schema, Eloquent models, validated create/update/delete workflows, and real dashboard queries. The registration screen is intentionally preview-only until those backend workflows are implemented.
+Create the environment file and application key:
 
-## Phase 2 — MySQL device inventory
-
-The device inventory now supports database-backed registration, listing, searching, filtering, viewing, editing and deleting.
-
-### Configure MySQL
-
-1. Create a MySQL database named `assetflow` (or choose another name).
-2. Copy `.env.example` to `.env` if you do not already have an `.env` file.
-3. Set `DB_CONNECTION=mysql`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME` and `DB_PASSWORD` in `.env` to match your local MySQL account. Never commit `.env`.
-4. Run:
-
-```bash
+```powershell
+Copy-Item .env.example .env
 php artisan key:generate
-php artisan migrate
+```
+
+Install the frontend dependencies:
+
+```powershell
 npm install
-npm run build
+```
+
+## Database configuration
+
+Create a MySQL or MariaDB database named `assetflow`. Then update `.env`:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=assetflow
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+Use the username and password configured for your local MySQL installation.
+Do not commit `.env` or database credentials.
+
+Run the migrations:
+
+```powershell
+php artisan config:clear
+php artisan migrate
+```
+
+## Running the application
+
+Start the Laravel server:
+
+```powershell
 php artisan serve
 ```
 
-### Device inventory features
+In a second PowerShell terminal, start Vite:
 
-- Unique serial number validation.
-- Automatically generated asset tags (`AST-00001`, etc.).
-- Category, status and text search filters.
-- Pagination, device detail, edit and delete workflows.
-- Purchase date, warranty expiry, condition and notes fields.
-- Dashboard totals and recent devices read from the database.
+```powershell
+npm run dev
+```
 
-### Tests
+Open [http://127.0.0.1:8000](http://127.0.0.1:8000) in a browser.
 
-Run `php artisan test` after installing Composer dependencies. Feature tests cover inventory loading, registration, serial number uniqueness, updates and deletion.
+For a production frontend build, use:
 
+```powershell
+npm run build
+```
 
-## Phase 3 — Employees, departments and assignments
+## Main pages
 
-Phase 3 adds relational MySQL tables for departments, employees and device assignment history. It includes employee and department directories, assignment creation, device return recording, assignment search/filtering, and automatic device status changes.
+| Page | URL |
+| --- | --- |
+| Dashboard | `/` |
+| Device inventory | `/devices` |
+| Register a device | `/devices/register` |
+| Assignments | `/assignments` |
+| Employees | `/employees` |
+| Departments | `/departments` |
 
-### Apply Phase 3 migrations
+Maintenance, reports, and settings pages are currently placeholders for future
+work.
 
-Back up your database first, then run the following from the project directory. These are additive migrations and do not require dropping the existing `devices` table:
+## Demo data
 
-```bash
-php artisan migrate
-php artisan route:list
+After configuring the database, demo records can be imported from an SQL dump
+using the MySQL client:
+
+```powershell
+C:\xampp\mysql\bin\mysql.exe -u root -p assetflow < C:\path\to\assetflow.sql
+```
+
+If the MySQL root account has no password, press Enter when prompted. Adjust
+the MySQL executable and SQL file paths for your installation.
+
+## Testing
+
+Run the test suite with:
+
+```powershell
 php artisan test
 ```
 
-### Workflow rules
+## Useful commands
 
-- Department names and codes are unique. Departments with employees cannot be deleted; employees are retained and can be deactivated.
-- Employee codes and email addresses are unique. Employees with assignment history cannot be deleted.
-- Only active employees and devices with `available` status can receive a new assignment.
-- Assignment creation locks the device row in a database transaction, records the handover and changes device status to `assigned`.
-- Returning an active assignment records the return date and notes and changes the device status back to `available`.
-- Assignment records are retained as history; they are not deleted when a device is returned.
+```powershell
+php artisan route:list
+php artisan migrate:status
+php artisan optimize:clear
+```
 
-### Notes
+## Project structure
 
-The app currently has no authentication/authorization workflow in this phase. `assigned_by` is nullable until user authentication and role permissions are implemented. Do not expose this deployment publicly until authentication and authorization are added.
+- `app/` - Models, controllers, and application services
+- `database/migrations/` - Database schema changes
+- `resources/views/` - Blade templates
+- `resources/css/` and `resources/js/` - Frontend source files
+- `routes/web.php` - Web routes
+- `public/` - Public entry point and compiled assets
+- `tests/` - Feature and unit tests
+
+## Security note
+
+Authentication and authorization are not currently implemented. Do not expose
+this development application publicly until access control has been added.
+
+## License
+
+This project is based on the Laravel framework and is intended for local
+development and internal asset-management use.
