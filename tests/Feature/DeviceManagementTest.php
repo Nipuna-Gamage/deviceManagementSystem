@@ -1,9 +1,21 @@
 <?php
 
 use App\Models\Device;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
+
+beforeEach(function () {
+    $user = User::create([
+        'name' => 'Test Admin',
+        'email' => 'admin@example.test',
+        'password' => 'StrongPassword123!',
+        'role' => 'admin',
+        'is_active' => true,
+    ]);
+    $this->actingAs($user);
+});
 
 it('shows the device inventory page', function () {
     $this->get(route('devices.index'))->assertOk()->assertSee('Device inventory');

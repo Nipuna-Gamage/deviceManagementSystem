@@ -29,11 +29,15 @@
             <div class="workspace-label">MANAGE</div>
             <a href="{{ route('maintenance.index') }}" class="nav-link {{ request()->routeIs('maintenance.*') ? 'active' : '' }}"><span class="nav-icon">⚒</span>Maintenance</a>
             <a href="{{ route('reports.index') }}" class="nav-link {{ request()->routeIs('reports.*') ? 'active' : '' }}"><span class="nav-icon">▥</span>Reports</a>
+            @if(auth()->user()->role === 'admin')
+            <a href="{{ route('users.index') }}" class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}"><span class="nav-icon">♙</span>User management</a>
+            <a href="{{ route('audit.index') }}" class="nav-link {{ request()->routeIs('audit.*') ? 'active' : '' }}"><span class="nav-icon">◷</span>Audit logs</a>
+            @endif
             <a href="{{ route('settings.index') }}" class="nav-link {{ request()->routeIs('settings.*') ? 'active' : '' }}"><span class="nav-icon">⚙</span>Settings</a>
         </nav>
         <div class="sidebar-bottom">
             <div class="help-card"><div class="help-icon">✦</div><strong>Need a hand?</strong><p>Find your way around AssetFlow.</p><a href="{{ route('reports.index') }}">Explore workspace <span>↗</span></a></div>
-            <div class="profile-row"><div class="avatar">AF</div><div class="profile-copy"><strong>Workspace Admin</strong><small>Administrator</small></div><span class="profile-more">···</span></div>
+            <div class="profile-row"><div class="avatar">{{ strtoupper(substr(auth()->user()->name, 0, 2)) }}</div><div class="profile-copy"><strong>{{ auth()->user()->name }}</strong><small>{{ ucfirst(auth()->user()->role) }}</small></div><form method="POST" action="{{ route('logout') }}">@csrf<button class="logout-link" type="submit" title="Sign out" aria-label="Sign out">↗</button></form></div>
         </div>
     </aside>
 
@@ -41,7 +45,7 @@
         <header class="topbar">
             <button class="mobile-menu" type="button" aria-label="Toggle navigation" data-menu-toggle>☰</button>
             <div class="breadcrumbs"><span>Workspace</span><b>/</b><strong>@yield('breadcrumb', 'Overview')</strong></div>
-            <div class="topbar-actions"><span class="system-status"><i></i> All systems normal</span><button class="icon-button" type="button" aria-label="Notifications">♧<span class="notification-dot"></span></button><div class="top-avatar">AF</div></div>
+            <div class="topbar-actions"><span class="system-status"><i></i> All systems normal</span><button class="icon-button" type="button" aria-label="Notifications">♧<span class="notification-dot"></span></button><div class="top-avatar">{{ strtoupper(substr(auth()->user()->name, 0, 2)) }}</div></div>
         </header>
         <main class="page-content">@yield('content')</main>
         <footer class="footer"><span>© {{ date('Y') }} AssetFlow</span><span>Device management, made clearer.</span></footer>
