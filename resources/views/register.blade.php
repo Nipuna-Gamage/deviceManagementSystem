@@ -1,39 +1,11 @@
 @extends('layouts.app')
-
+@section('title', 'Register device')
+@section('breadcrumb', 'Register device')
 @section('content')
-<div class="container mx-auto px-4">
-    <h1 class="text-2xl font-bold mb-4">Register a Device</h1>
-    <form action="{{ route('register.store') }}" method="POST" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-        @csrf
-        <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="device_name">
-                Device Name
-            </label>
-            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="device_name" name="device_name" type="text" placeholder="Enter device name" required>
-        </div>
-        <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="device_type">
-                Device Type
-            </label>
-            <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="device_type" name="device_type" required>
-                <option value="">Select device type</option>
-                <option value="smartphone">Smartphone</option>
-                <option value="tablet">Tablet</option>
-                <option value="laptop">Laptop</option>
-                <option value="desktop">Desktop</option>
-            </select>
-        </div>
-        <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="serial_number">
-                Serial Number
-            </label>
-            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="serial_number" name="serial_number" type="text" placeholder="Enter serial number" required>
-        </div>
-        <div class="flex items-center justify-between">
-            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
-                Register Device
-            </button>
-        </div>
-    </form>
-</div>
+<div class="page-heading"><div><div class="eyebrow">DEVICE INVENTORY</div><h1>Register a device</h1><p>Add a new asset to your organization’s inventory.</p></div><a class="button button-secondary" href="{{ route('devices.index') }}">← Back to inventory</a></div>
+<div class="form-layout"><section class="panel form-panel"><div class="form-section-heading"><div><h2>Device information</h2><p>Enter the basic details of the device.</p></div><span class="required-note">* Required fields</span></div>
+    <div class="form-grid"><div class="form-field"><label for="device_name">Device name <span>*</span></label><input id="device_name" type="text" placeholder="e.g. Dell Latitude 7440" disabled><small>Enter the manufacturer and model.</small></div><div class="form-field"><label for="device_type">Device category <span>*</span></label><select id="device_type" disabled><option>Select a category</option><option>Laptop</option><option>Desktop</option><option>Monitor</option><option>Smartphone</option><option>Tablet</option><option>Other</option></select></div><div class="form-field"><label for="serial_number">Serial number <span>*</span></label><input id="serial_number" type="text" placeholder="Enter serial number" disabled></div><div class="form-field"><label for="asset_tag">Asset tag</label><input id="asset_tag" type="text" placeholder="Generated in a future phase" disabled></div></div>
+    <div class="form-notice"><span>ⓘ</span><p><strong>Registration is being prepared.</strong> The form design is ready. Saving devices to MySQL, validation and asset-tag generation will be enabled in Phase 2.</p></div>
+    <div class="form-actions"><a class="button button-secondary" href="{{ route('home') }}">Cancel</a><button class="button button-primary" type="button" disabled>Register device</button></div>
+</section><aside class="panel tips-panel"><div class="tips-icon">✦</div><h3>Before you register</h3><p>Keep these details handy to make asset tracking easier.</p><ul><li>Manufacturer and model name</li><li>Unique serial number</li><li>Device category</li><li>Purchase and warranty details (coming soon)</li></ul></aside></div>
 @endsection

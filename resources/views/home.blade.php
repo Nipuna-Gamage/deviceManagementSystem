@@ -1,25 +1,27 @@
 @extends('layouts.app')
-
+@section('title', 'Overview')
+@section('breadcrumb', 'Overview')
 @section('content')
-<div class="max-w-7xl mx-auto">
-    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-        <div class="p-6 bg-white border-b border-gray-200">
-            <h2 class="text-2xl font-semibold mb-4">Ministry of Home Affairs</h2>
-            <div class="grid grid-cols-2 gap-4">
-                <a href="{{ route('register') }}" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
-                    Register a device
-                </a>
-                <a href="{{ route('update') }}" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
-                    Update a device
-                </a>
-                <a href="{{ route('delete') }}" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
-                    Delete a device
-                </a>
-                <a href="{{ route('check') }}" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded">
-                    Check a device
-                </a>
-            </div>
-        </div>
-    </div>
+<div class="page-heading">
+    <div><div class="eyebrow">MONDAY, YOUR WORKSPACE AT A GLANCE</div><h1>Good day, Admin <span class="wave">✦</span></h1><p>Here’s what’s happening with your organization’s devices.</p></div>
+    <a class="button button-primary" href="{{ route('register') }}"><span>＋</span> Register a device</a>
 </div>
+<div class="notice-banner"><div class="notice-symbol">✧</div><div><strong>Your AssetFlow workspace is ready to set up</strong><p>These dashboard figures are sample data for the redesign preview. Connect your MySQL-backed inventory in the next phase.</p></div><a href="{{ route('devices.index') }}">Explore inventory <span>→</span></a></div>
+<section class="stats-grid" aria-label="Inventory summary">
+    <article class="stat-card"><div class="stat-top"><span>Total devices</span><span class="stat-icon blue">▣</span></div><div class="stat-value">248</div><div class="stat-foot"><span class="trend positive">↗ 8.2%</span><span>vs. last month</span></div><div class="mini-bars"><i style="height:35%"></i><i style="height:48%"></i><i style="height:42%"></i><i style="height:65%"></i><i style="height:54%"></i><i style="height:78%"></i><i style="height:68%"></i><i style="height:92%"></i></div></article>
+    <article class="stat-card"><div class="stat-top"><span>Assigned devices</span><span class="stat-icon violet">⇄</span></div><div class="stat-value">186</div><div class="stat-foot"><span class="trend positive">↗ 5.4%</span><span>vs. last month</span></div><div class="progress-track"><span style="width:75%"></span></div><small class="stat-caption">75% of total inventory</small></article>
+    <article class="stat-card"><div class="stat-top"><span>Available devices</span><span class="stat-icon green">✓</span></div><div class="stat-value">42</div><div class="stat-foot"><span class="trend neutral">● 16.9%</span><span>of total inventory</span></div><div class="progress-track green-track"><span style="width:17%"></span></div><small class="stat-caption">Ready to be assigned</small></article>
+    <article class="stat-card"><div class="stat-top"><span>Needs attention</span><span class="stat-icon orange">!</span></div><div class="stat-value">20</div><div class="stat-foot"><span class="trend warning">12 maintenance</span><span>8 overdue returns</span></div><div class="attention-line"><span></span><span></span><span></span><span></span><span></span></div><small class="stat-caption">Items requiring follow-up</small></article>
+</section>
+<section class="dashboard-grid">
+    <article class="panel inventory-panel"><div class="panel-heading"><div><h2>Inventory overview</h2><p>Device distribution by category</p></div><a class="text-link" href="{{ route('devices.index') }}">View inventory <span>→</span></a></div>
+        <div class="inventory-content"><div class="donut-wrap"><div class="donut"><div><strong>248</strong><small>Total assets</small></div></div></div><div class="legend-list"><div><i class="legend-dot dot-blue"></i><span>Laptops</span><strong>112</strong></div><div><i class="legend-dot dot-violet"></i><span>Desktops</span><strong>64</strong></div><div><i class="legend-dot dot-teal"></i><span>Monitors</span><strong>48</strong></div><div><i class="legend-dot dot-orange"></i><span>Other</span><strong>24</strong></div></div></div>
+    </article>
+    <article class="panel activity-panel"><div class="panel-heading"><div><h2>Quick actions</h2><p>Common tasks, right at your fingertips</p></div></div><div class="quick-actions"><a href="{{ route('register') }}"><span class="quick-icon q-blue">＋</span><span><strong>Register a device</strong><small>Add a new asset to inventory</small></span><b>→</b></a><a href="{{ route('assignments.index') }}"><span class="quick-icon q-violet">⇄</span><span><strong>Assign a device</strong><small>Allocate an asset to an employee</small></span><b>→</b></a><a href="{{ route('maintenance.index') }}"><span class="quick-icon q-orange">⚒</span><span><strong>Log maintenance</strong><small>Record a repair or service</small></span><b>→</b></a><a href="{{ route('reports.index') }}"><span class="quick-icon q-green">▥</span><span><strong>Generate a report</strong><small>Review your asset activity</small></span><b>→</b></a></div></article>
+</section>
+<section class="panel recent-panel"><div class="panel-heading"><div><h2>Recently added devices</h2><p>A snapshot of the latest assets in your workspace</p></div><a class="text-link" href="{{ route('devices.index') }}">See all devices <span>→</span></a></div><div class="table-scroll"><table class="data-table"><thead><tr><th>DEVICE</th><th>ASSET TAG</th><th>CATEGORY</th><th>ASSIGNED TO</th><th>STATUS</th></tr></thead><tbody>
+<tr><td><span class="device-cell"><span class="device-thumb laptop">▰</span><span><strong>MacBook Pro 14”</strong><small>Apple · M3 Pro</small></span></span></td><td class="muted-cell">AST-0248</td><td>Laptop</td><td>Olivia Rhye</td><td><span class="status-pill assigned"><i></i> Assigned</span></td></tr>
+<tr><td><span class="device-cell"><span class="device-thumb monitor">▣</span><span><strong>Dell UltraSharp 27”</strong><small>Dell · U2723QE</small></span></span></td><td class="muted-cell">AST-0247</td><td>Monitor</td><td>Unassigned</td><td><span class="status-pill available"><i></i> Available</span></td></tr>
+<tr><td><span class="device-cell"><span class="device-thumb laptop">▰</span><span><strong>ThinkPad X1 Carbon</strong><small>Lenovo · Gen 11</small></span></span></td><td class="muted-cell">AST-0246</td><td>Laptop</td><td>Phoenix Baker</td><td><span class="status-pill maintenance"><i></i> Maintenance</span></td></tr>
+</tbody></table></div></section>
 @endsection

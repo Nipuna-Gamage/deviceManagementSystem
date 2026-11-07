@@ -3,44 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Device Management System</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>@yield('title', 'Overview') · AssetFlow</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-gray-100">
-    <div class="flex h-screen">
-        <!-- Sidebar -->
-        <div class="bg-gray-800 text-white w-64 flex flex-col">
-            <div class="p-4">
-                <h1 class="text-2xl font-bold">LOGO</h1>
-            </div>
-            <nav class="flex-1">
-                <a href="{{ route('home') }}" class="block py-2 px-4 hover:bg-gray-700">Home</a>
-                <a href="{{ route('register') }}" class="block py-2 px-4 hover:bg-gray-700">Register a device</a>
-                <a href="{{ route('update') }}" class="block py-2 px-4 hover:bg-gray-700">Update a device</a>
-                <a href="{{ route('check') }}" class="block py-2 px-4 hover:bg-gray-700">Check a device</a>
-            </nav>
+<body>
+<div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+        <a class="brand" href="{{ route('home') }}">
+            <span class="brand-mark"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M7 7.5 16 3l9 4.5v17L16 29l-9-4.5v-17Z"/><path d="m11 12 5-2.5 5 2.5v8l-5 2.5-5-2.5v-8Z"/></svg></span>
+            <span class="brand-name">asset<span>flow</span><small>ASSET MANAGEMENT</small></span>
+        </a>
+        <div class="workspace-label">WORKSPACE</div>
+        <nav class="side-nav" aria-label="Main navigation">
+            <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}"><span class="nav-icon">⌂</span>Overview</a>
+            <a href="{{ route('devices.index') }}" class="nav-link {{ request()->routeIs('devices.*') ? 'active' : '' }}"><span class="nav-icon">▣</span>Device inventory</a>
+            <a href="{{ route('register') }}" class="nav-link {{ request()->routeIs('register*') ? 'active' : '' }}"><span class="nav-icon">＋</span>Register device</a>
+            <a href="{{ route('assignments.index') }}" class="nav-link {{ request()->routeIs('assignments.*') ? 'active' : '' }}"><span class="nav-icon">⇄</span>Assignments</a>
+            <a href="{{ route('employees.index') }}" class="nav-link {{ request()->routeIs('employees.*') ? 'active' : '' }}"><span class="nav-icon">♙</span>Employees</a>
+            <a href="{{ route('departments.index') }}" class="nav-link {{ request()->routeIs('departments.*') ? 'active' : '' }}"><span class="nav-icon">▤</span>Departments</a>
+            <div class="nav-divider"></div>
+            <div class="workspace-label">MANAGE</div>
+            <a href="{{ route('maintenance.index') }}" class="nav-link {{ request()->routeIs('maintenance.*') ? 'active' : '' }}"><span class="nav-icon">⚒</span>Maintenance</a>
+            <a href="{{ route('reports.index') }}" class="nav-link {{ request()->routeIs('reports.*') ? 'active' : '' }}"><span class="nav-icon">▥</span>Reports</a>
+            <a href="{{ route('settings.index') }}" class="nav-link {{ request()->routeIs('settings.*') ? 'active' : '' }}"><span class="nav-icon">⚙</span>Settings</a>
+        </nav>
+        <div class="sidebar-bottom">
+            <div class="help-card"><div class="help-icon">✦</div><strong>Need a hand?</strong><p>Find your way around AssetFlow.</p><a href="{{ route('reports.index') }}">Explore workspace <span>↗</span></a></div>
+            <div class="profile-row"><div class="avatar">AF</div><div class="profile-copy"><strong>Workspace Admin</strong><small>Administrator</small></div><span class="profile-more">···</span></div>
         </div>
+    </aside>
 
-        <!-- Main content -->
-        <div class="flex-1 flex flex-col">
-            <!-- Header -->
-            <header class="bg-white shadow">
-                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-                    <h1 class="text-3xl font-bold text-gray-900">
-                        Device Management System
-                    </h1>
-                    <div class="flex items-center">
-                        <span class="mr-2">username</span>
-                        <img src="https://via.placeholder.com/40" alt="User" class="w-10 h-10 rounded-full">
-                    </div>
-                </div>
-            </header>
-
-            <!-- Page content -->
-            <main class="flex-1 overflow-y-auto p-6">
-                @yield('content')
-            </main>
-        </div>
+    <div class="main-column">
+        <header class="topbar">
+            <button class="mobile-menu" type="button" aria-label="Toggle navigation" data-menu-toggle>☰</button>
+            <div class="breadcrumbs"><span>Workspace</span><b>/</b><strong>@yield('breadcrumb', 'Overview')</strong></div>
+            <div class="topbar-actions"><span class="system-status"><i></i> All systems normal</span><button class="icon-button" type="button" aria-label="Notifications">♧<span class="notification-dot"></span></button><div class="top-avatar">AF</div></div>
+        </header>
+        <main class="page-content">@yield('content')</main>
+        <footer class="footer"><span>© {{ date('Y') }} AssetFlow</span><span>Device management, made clearer.</span></footer>
     </div>
+</div>
+<div class="sidebar-scrim" data-menu-close></div>
 </body>
 </html>

@@ -18,7 +18,7 @@ class DeviceController extends Controller
 
     public function store(Request $request)
     {
-        // Validation and storing logic here
+        return back()->with('status', 'Device registration will be enabled in Phase 2.');
     }
 
     public function update()

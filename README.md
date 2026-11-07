@@ -64,3 +64,22 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## AssetFlow redesign — Phase 1
+
+The first redesign phase introduces a responsive AssetFlow workspace shell, navigation, dashboard preview, and device-registration screen. Dashboard metrics and recent-device rows are illustrative sample content only; they are not read from the database yet.
+
+### Frontend assets
+
+Install the frontend dependencies and build the Vite assets:
+
+```bash
+npm install
+npm run build
+```
+
+For local development, run `npm run dev` alongside the Laravel development server.
+
+### Next phase
+
+Phase 2 will add the MySQL device schema, Eloquent models, validated create/update/delete workflows, and real dashboard queries. The registration screen is intentionally preview-only until those backend workflows are implemented.
