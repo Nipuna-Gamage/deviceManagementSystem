@@ -11,6 +11,7 @@ use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\GlobalSearchController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -94,7 +95,14 @@ Route::middleware(['auth', 'active', 'audit'])->group(function () {
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
     Route::get('/reports/devices.csv', [ReportController::class, 'devices'])->name('reports.devices');
     Route::get('/reports/assignments.csv', [ReportController::class, 'assignments'])->name('reports.assignments');
-    Route::view('/settings', 'placeholder', ['pageTitle' => 'Settings', 'pageDescription' => 'Configure your AssetFlow workspace.'])->name('settings.index');
+    Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
+    Route::put('/settings/profile', [SettingsController::class, 'profile'])->name('settings.profile');
+    Route::put('/settings/password', [SettingsController::class, 'password'])->name('settings.password');
+    Route::put('/settings/preferences', [SettingsController::class, 'preferences'])->name('settings.preferences');
+    Route::middleware('role:admin')->group(function () {
+        Route::put('/settings/organization', [SettingsController::class, 'organization'])->name('settings.organization');
+        Route::put('/settings/system', [SettingsController::class, 'system'])->name('settings.system');
+    });
     Route::get('/update', fn () => redirect()->route('devices.index'))->name('update');
     Route::get('/check', fn () => redirect()->route('devices.index'))->name('check');
     Route::get('/delete', fn () => redirect()->route('devices.index'))->name('delete');

@@ -10,7 +10,8 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body>
+@php($settingsPreferences = auth()->user()->preference)
+<body class="{{ $settingsPreferences?->theme === 'dark' ? 'theme-dark' : '' }} {{ $settingsPreferences?->sidebar_collapsed ? 'sidebar-compact' : '' }}" style="--user-accent: {{ $settingsPreferences?->accent_color ?: '#536df0' }}">
 <div class="app-shell">
     <aside class="sidebar" id="sidebar">
         <a class="brand" href="{{ route('home') }}">
@@ -37,7 +38,7 @@
         </nav>
         <div class="sidebar-bottom">
             <div class="help-card"><div class="help-icon">✦</div><strong>Need a hand?</strong><p>Find your way around AssetFlow.</p><a href="{{ route('reports.index') }}">Explore workspace <span>↗</span></a></div>
-            <div class="profile-row"><div class="avatar">{{ strtoupper(substr(auth()->user()->name, 0, 2)) }}</div><div class="profile-copy"><strong>{{ auth()->user()->name }}</strong><small>{{ ucfirst(auth()->user()->role) }}</small></div><form method="POST" action="{{ route('logout') }}">@csrf<button class="logout-link" type="submit" title="Sign out" aria-label="Sign out">↗</button></form></div>
+            <div class="profile-row"><div class="avatar">@if(auth()->user()->profile_photo)<img src="{{ asset('storage/'.auth()->user()->profile_photo) }}" alt="">@else{{ strtoupper(substr(auth()->user()->name, 0, 2)) }}@endif</div><div class="profile-copy"><strong>{{ auth()->user()->name }}</strong><small>{{ ucfirst(auth()->user()->role) }}</small></div><form method="POST" action="{{ route('logout') }}">@csrf<button class="logout-link" type="submit" title="Sign out" aria-label="Sign out">↗</button></form></div>
         </div>
     </aside>
 
