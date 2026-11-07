@@ -21,7 +21,7 @@
 </section>
 <section class="panel recent-panel"><div class="panel-heading"><div><h2>Recently added devices</h2><p>A snapshot of the latest assets in your workspace</p></div><a class="text-link" href="{{ route('devices.index') }}">See all devices <span>→</span></a></div><div class="table-scroll"><table class="data-table"><thead><tr><th>DEVICE</th><th>ASSET TAG</th><th>CATEGORY</th><th>ASSIGNED TO</th><th>STATUS</th></tr></thead><tbody>
 @forelse($recentDevices as $device)
-<tr><td><span class="device-cell"><span class="device-thumb laptop">▰</span><span><strong>{{ $device->name }}</strong><small>{{ $device->manufacturer ?: 'Manufacturer not set' }}</small></span></span></td><td class="muted-cell">{{ $device->asset_tag }}</td><td>{{ $device->category }}</td><td>—</td><td><span class="status-pill {{ $device->status }}"><i></i>{{ ucfirst($device->status) }}</span></td></tr>
+<tr><td><span class="device-cell"><span class="device-thumb laptop">▰</span><span><strong>{{ $device->name }}</strong><small>{{ $device->manufacturer ?: 'Manufacturer not set' }}</small></span></span></td><td class="muted-cell">{{ $device->asset_tag }}</td><td>{{ $device->category }}</td><td>{{ $device->activeAssignment?->employee?->full_name ?? '—' }}</td><td><span class="status-pill {{ $device->status }}"><i></i>{{ ucfirst($device->status) }}</span></td></tr>
 @empty
 <tr><td colspan="5" class="empty-state">No devices registered yet. Start by adding your first device.</td></tr>
 @endforelse

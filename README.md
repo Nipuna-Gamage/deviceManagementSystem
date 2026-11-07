@@ -115,3 +115,31 @@ php artisan serve
 ### Tests
 
 Run `php artisan test` after installing Composer dependencies. Feature tests cover inventory loading, registration, serial number uniqueness, updates and deletion.
+
+
+## Phase 3 — Employees, departments and assignments
+
+Phase 3 adds relational MySQL tables for departments, employees and device assignment history. It includes employee and department directories, assignment creation, device return recording, assignment search/filtering, and automatic device status changes.
+
+### Apply Phase 3 migrations
+
+Back up your database first, then run the following from the project directory. These are additive migrations and do not require dropping the existing `devices` table:
+
+```bash
+php artisan migrate
+php artisan route:list
+php artisan test
+```
+
+### Workflow rules
+
+- Department names and codes are unique. Departments with employees cannot be deleted; employees are retained and can be deactivated.
+- Employee codes and email addresses are unique. Employees with assignment history cannot be deleted.
+- Only active employees and devices with `available` status can receive a new assignment.
+- Assignment creation locks the device row in a database transaction, records the handover and changes device status to `assigned`.
+- Returning an active assignment records the return date and notes and changes the device status back to `available`.
+- Assignment records are retained as history; they are not deleted when a device is returned.
+
+### Notes
+
+The app currently has no authentication/authorization workflow in this phase. `assigned_by` is nullable until user authentication and role permissions are implemented. Do not expose this deployment publicly until authentication and authorization are added.

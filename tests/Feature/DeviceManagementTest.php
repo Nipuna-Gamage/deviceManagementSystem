@@ -68,3 +68,67 @@ it('updates and deletes a device', function () {
     $this->delete(route('devices.destroy', $device))->assertRedirect(route('devices.index'));
     $this->assertDatabaseMissing('devices', ['id' => $device->id]);
 });
+
+it('creates departments and employees', function () {
+    $department = \App\Models\Department::create(['name' => 'Information Technology', 'code' => 'IT']);
+
+    $this->post(route('employees.store'), [
+        'employee_code' => 'EMP-001',
+        'first_name' => 'Nimal',
+        'last_name' => 'Perera',
+        'email' => 'nimal@example.test',
+        'department_id' => $department->id,
+    ])->assertRedirect();
+
+    $this->assertDatabaseHas('employees', [
+        'employee_code' => 'EMP-001',
+        'department_id' => $department->id,
+    ]);
+});
+
+it('assigns an available device and records its return', function () {
+    $department = \App\Models\Department::create(['name' => 'Operations', 'code' => 'OPS']);
+    $employee = \App\Models\Employee::create([
+        'employee_code' => 'EMP-002', 'first_name' => 'Saman', 'last_name' => 'Silva',
+        'email' => 'saman@example.test', 'department_id' => $department->id,
+    ]);
+    $device = Device::create([
+        'name' => 'HP ProBook', 'category' => 'Laptop', 'serial_number' => 'HP-PHASE3-001',
+        'asset_tag' => 'AST-90001', 'status' => 'available', 'condition' => 'good',
+    ]);
+
+    $this->post(route('assignments.store'), [
+        'device_id' => $device->id,
+        'employee_id' => $employee->id,
+        'assigned_at' => now()->toDateString(),
+    ])->assertRedirect();
+
+    expect($device->fresh()->status)->toBe('assigned');
+    $assignment = \App\Models\DeviceAssignment::firstOrFail();
+    expect($assignment->returned_at)->toBeNull();
+
+    $this->patch(route('assignments.return', $assignment), [
+        'returned_at' => now()->toDateString(),
+        'return_notes' => 'Returned in good condition',
+    ])->assertRedirect();
+
+    expect($device->fresh()->status)->toBe('available');
+    expect($assignment->fresh()->returned_at)->not->toBeNull();
+});
+
+it('prevents assigning a device that is already assigned', function () {
+    $employee = \App\Models\Employee::create([
+        'employee_code' => 'EMP-003', 'first_name' => 'Kamal', 'last_name' => 'Fernando',
+        'email' => 'kamal@example.test',
+    ]);
+    $device = Device::create([
+        'name' => 'Assigned desktop', 'category' => 'Desktop', 'serial_number' => 'DESK-PHASE3-001',
+        'asset_tag' => 'AST-90002', 'status' => 'assigned', 'condition' => 'good',
+    ]);
+
+    $this->from(route('assignments.index'))->post(route('assignments.store'), [
+        'device_id' => $device->id,
+        'employee_id' => $employee->id,
+        'assigned_at' => now()->toDateString(),
+    ])->assertSessionHasErrors('device_id');
+});

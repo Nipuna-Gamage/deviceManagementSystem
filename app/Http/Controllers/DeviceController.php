@@ -63,6 +63,10 @@ class DeviceController extends Controller
 
     public function update(Request $request, Device $device): RedirectResponse
     {
+        if ($device->assignments()->whereNull('returned_at')->exists() && $request->input('status') !== 'assigned') {
+            return back()->withErrors(['status' => 'Return the currently assigned device before changing its status.'])->withInput();
+        }
+
         $device->update($request->validate($this->rules($device)));
 
         return redirect()->route('devices.show', $device)->with('success', 'Device details updated successfully.');
