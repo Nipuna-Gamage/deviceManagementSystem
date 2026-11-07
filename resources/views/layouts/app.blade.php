@@ -45,7 +45,9 @@
         <header class="topbar">
             <button class="mobile-menu" type="button" aria-label="Toggle navigation" data-menu-toggle>☰</button>
             <div class="breadcrumbs"><span>Workspace</span><b>/</b><strong>@yield('breadcrumb', 'Overview')</strong></div>
-            <div class="topbar-actions"><span class="system-status"><i></i> All systems normal</span><button class="icon-button" type="button" aria-label="Notifications">♧<span class="notification-dot"></span></button><div class="top-avatar">{{ strtoupper(substr(auth()->user()->name, 0, 2)) }}</div></div>
+            <div class="topbar-actions">
+            <form class="global-search" action="{{ route('search') }}" method="GET" role="search"><input type="search" name="q" placeholder="Search assets, people..." aria-label="Search AssetFlow" value="{{ request('q') }}"><button type="submit" aria-label="Search">⌕</button></form>
+            <span class="system-status"><i></i> All systems normal</span><a class="icon-button notification-link" href="{{ route('notifications.index') }}" aria-label="Notifications">♧@if(auth()->user()->unreadNotifications()->exists())<span class="notification-dot"></span>@endif</a><div class="top-avatar">{{ strtoupper(substr(auth()->user()->name, 0, 2)) }}</div></div>
         </header>
         <main class="page-content">@yield('content')</main>
         <footer class="footer"><span>© {{ date('Y') }} AssetFlow</span><span>Device management, made clearer.</span></footer>

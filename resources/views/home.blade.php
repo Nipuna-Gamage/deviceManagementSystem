@@ -13,6 +13,10 @@
     <article class="stat-card"><div class="stat-top"><span>Available devices</span><span class="stat-icon green">✓</span></div><div class="stat-value">{{ $availableDevices }}</div><div class="stat-foot"><span class="trend neutral">Live</span><span>ready to assign</span></div><div class="progress-track green-track"><span style="width:{{ $totalDevices > 0 ? min(100, round(($availableDevices / $totalDevices) * 100)) : 0 }}%"></span></div><small class="stat-caption">Ready to be assigned</small></article>
     <article class="stat-card"><div class="stat-top"><span>Needs attention</span><span class="stat-icon orange">!</span></div><div class="stat-value">{{ $maintenanceDevices }}</div><div class="stat-foot"><span class="trend warning">Needs attention</span><span>maintenance devices</span></div><div class="attention-line"><span></span><span></span><span></span><span></span><span></span></div><small class="stat-caption">Items requiring follow-up</small></article>
 </section>
+<section class="dashboard-grid" style="margin-bottom:20px">
+    <article class="panel" style="padding:20px"><div class="panel-heading"><div><h2>Device status analytics</h2><p>Current inventory distribution</p></div></div><div style="height:230px"><canvas id="homeStatusChart" aria-label="Device status analytics"></canvas></div></article>
+    <article class="panel" style="padding:20px"><div class="panel-heading"><div><h2>Registration trend</h2><p>New devices added over the last six months</p></div></div><div style="height:230px"><canvas id="homeMonthlyChart" aria-label="Monthly device registration trend"></canvas></div></article>
+</section>
 <section class="dashboard-grid">
     <article class="panel inventory-panel"><div class="panel-heading"><div><h2>Inventory overview</h2><p>Device distribution by category</p></div><a class="text-link" href="{{ route('devices.index') }}">View inventory <span>→</span></a></div>
         <div class="inventory-content"><div class="donut-wrap"><div class="donut"><div><strong>{{ $totalDevices }}</strong><small>Total assets</small></div></div></div><div class="legend-list">@foreach(\App\Models\Device::query()->select('category')->selectRaw('count(*) as aggregate')->groupBy('category')->orderByDesc('aggregate')->limit(4)->get() as $item)<div><i class="legend-dot dot-blue"></i><span>{{ $item->category }}</span><strong>{{ $item->aggregate }}</strong></div>@endforeach @if($totalDevices === 0)<small class="stat-caption">Register devices to see category totals.</small>@endif</div></div>
@@ -26,4 +30,20 @@
 <tr><td colspan="5" class="empty-state">No devices registered yet. Start by adding your first device.</td></tr>
 @endforelse
 </tbody></table></div></section>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    if (!window.Chart) return;
+    new Chart(document.getElementById('homeStatusChart'), {
+        type: 'doughnut',
+        data: { labels: ['Available','Assigned','Maintenance','Retired'], datasets: [{ data: @json([(int)($dashboardStatusStats['available'] ?? 0),(int)($dashboardStatusStats['assigned'] ?? 0),(int)($dashboardStatusStats['maintenance'] ?? 0),(int)($dashboardStatusStats['retired'] ?? 0)]), borderWidth: 0 }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, cutout: '65%' }
+    });
+    new Chart(document.getElementById('homeMonthlyChart'), {
+        type: 'line',
+        data: { labels: @json($dashboardMonthlyStats->pluck('label')->values()), datasets: [{ label: 'Devices', data: @json($dashboardMonthlyStats->pluck('total')->values()), tension: .35, fill: true }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+    });
+});
+</script>
 @endsection

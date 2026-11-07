@@ -21,7 +21,14 @@ class ReportController extends Controller
         $activeEmployees = Employee::where('is_active', true)->count();
         $activeAssignments = DeviceAssignment::whereNull('returned_at')->count();
         $recentMaintenance = MaintenanceRecord::with('device')->latest()->limit(5)->get();
-        return view('reports.index', compact('deviceStats', 'categoryStats', 'maintenanceCost', 'activeEmployees', 'activeAssignments', 'recentMaintenance'));
+        $monthlyDevices = collect(range(5, 0))->map(function ($monthsAgo) {
+            $month = now()->startOfMonth()->subMonths($monthsAgo);
+            return [
+                'label' => $month->format('M Y'),
+                'total' => Device::whereYear('created_at', $month->year)->whereMonth('created_at', $month->month)->count(),
+            ];
+        });
+        return view('reports.index', compact('deviceStats', 'categoryStats', 'maintenanceCost', 'activeEmployees', 'activeAssignments', 'recentMaintenance', 'monthlyDevices'));
     }
 
     public function devices(): StreamedResponse
@@ -31,7 +38,7 @@ class ReportController extends Controller
             fputcsv($out, ['Asset Tag', 'Name', 'Category', 'Manufacturer', 'Model', 'Serial Number', 'Status', 'Condition', 'Purchase Date', 'Warranty Expiry']);
             Device::orderBy('asset_tag')->chunk(500, function ($devices) use ($out) {
                 foreach ($devices as $device) {
-                    fputcsv($out, [$device->asset_tag, $device->name, $device->category, $device->manufacturer, $device->model, $device->serial_number, $device->status, $device->condition, $device->purchase_date?->format('Y-m-d'), $device->warranty_expiry?->format('Y-m-d')]);
+                    fputcsv($out, array_map(fn ($value) => $this->safeCsvCell($value), [$device->asset_tag, $device->name, $device->category, $device->manufacturer, $device->model, $device->serial_number, $device->status, $device->condition, $device->purchase_date?->format('Y-m-d'), $device->warranty_expiry?->format('Y-m-d')]));
                 }
             });
             fclose($out);
@@ -45,10 +52,16 @@ class ReportController extends Controller
             fputcsv($out, ['Asset Tag', 'Device', 'Employee', 'Employee Code', 'Assigned At', 'Returned At', 'Assignment Notes', 'Return Notes']);
             DeviceAssignment::with(['device', 'employee'])->orderBy('assigned_at')->chunk(500, function ($rows) use ($out) {
                 foreach ($rows as $row) {
-                    fputcsv($out, [$row->device?->asset_tag, $row->device?->name, trim(($row->employee?->first_name ?? '') . ' ' . ($row->employee?->last_name ?? '')), $row->employee?->employee_code, $row->assigned_at?->format('Y-m-d H:i:s'), $row->returned_at?->format('Y-m-d H:i:s'), $row->assignment_notes, $row->return_notes]);
+                    fputcsv($out, array_map(fn ($value) => $this->safeCsvCell($value), [$row->device?->asset_tag, $row->device?->name, trim(($row->employee?->first_name ?? '') . ' ' . ($row->employee?->last_name ?? '')), $row->employee?->employee_code, $row->assigned_at?->format('Y-m-d H:i:s'), $row->returned_at?->format('Y-m-d H:i:s'), $row->assignment_notes, $row->return_notes]));
                 }
             });
             fclose($out);
         }, 'assetflow-assignments-' . now()->format('Ymd-His') . '.csv', ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
+    private function safeCsvCell(mixed $value): string
+    {
+        $cell = (string) ($value ?? '');
+        return preg_match('/^[\\s]*[=+@\\-]/u', $cell) ? "'".$cell : $cell;
     }
 }

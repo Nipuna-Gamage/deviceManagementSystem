@@ -23,3 +23,9 @@
 .form-grid .full-width{grid-column:1/-1}
 .panel form select,.panel form input{max-width:180px}
 @media(max-width:700px){.form-grid{grid-template-columns:1fr}.form-grid .full-width{grid-column:auto}}
+
+.global-search{display:flex;align-items:center;border:1px solid #edf0f5;border-radius:7px;background:#fafbfe;height:32px;max-width:245px}
+.global-search input{width:190px;min-width:0;border:0;outline:0;background:transparent;padding:0 9px;font:10px 'DM Sans',sans-serif;color:#354057}
+.global-search button{border:0;background:transparent;color:#64718a;font-size:18px;padding:0 9px;cursor:pointer}
+.notification-link{text-decoration:none;display:inline-flex;align-items:center}
+@media(max-width:760px){.global-search{max-width:145px}.global-search input{width:105px}.topbar-actions{gap:10px}}

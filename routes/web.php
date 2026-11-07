@@ -9,6 +9,8 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\GlobalSearchController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -18,6 +20,10 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware(['auth', 'active', 'audit'])->group(function () {
     Route::post('/logout', [AuthController::class, 'destroy'])->name('logout');
+    Route::get('/search', [GlobalSearchController::class, 'index'])->name('search');
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.read-all');
 
     Route::get('/', function () {
         $totalDevices = \App\Models\Device::count();
@@ -25,7 +31,12 @@ Route::middleware(['auth', 'active', 'audit'])->group(function () {
         $assignedDevices = \App\Models\Device::where('status', 'assigned')->count();
         $maintenanceDevices = \App\Models\Device::where('status', 'maintenance')->count();
         $recentDevices = \App\Models\Device::with('activeAssignment.employee')->latest()->limit(5)->get();
-        return view('home', compact('totalDevices', 'availableDevices', 'assignedDevices', 'maintenanceDevices', 'recentDevices'));
+        $dashboardStatusStats = \App\Models\Device::query()->select('status')->selectRaw('count(*) as total')->groupBy('status')->pluck('total', 'status');
+        $dashboardMonthlyStats = collect(range(5, 0))->map(function ($monthsAgo) {
+            $month = now()->startOfMonth()->subMonths($monthsAgo);
+            return ['label' => $month->format('M'), 'total' => \App\Models\Device::whereYear('created_at', $month->year)->whereMonth('created_at', $month->month)->count()];
+        });
+        return view('home', compact('totalDevices', 'availableDevices', 'assignedDevices', 'maintenanceDevices', 'recentDevices', 'dashboardStatusStats', 'dashboardMonthlyStats'));
     })->name('home');
 
     Route::get('/devices/register', [DeviceController::class, 'create'])->name('register');
@@ -60,21 +71,13 @@ Route::middleware(['auth', 'active', 'audit'])->group(function () {
         Route::get('/audit-logs', [AuditLogController::class, 'index'])->name('audit.index');
     });
 
-    Route::get('/maintenance', [MaintenanceController::class, 'index'])
-        ->name('maintenance.index');
-    Route::post('/maintenance', [MaintenanceController::class, 'store'])
-        ->middleware('role:admin,manager')
-        ->name('maintenance.store');
-    Route::patch('/maintenance/{maintenance}', [MaintenanceController::class, 'update'])
-        ->middleware('role:admin,manager')
-        ->name('maintenance.update');
+    Route::get('/maintenance', [MaintenanceController::class, 'index'])->name('maintenance.index');
+    Route::post('/maintenance', [MaintenanceController::class, 'store'])->middleware('role:admin,manager')->name('maintenance.store');
+    Route::patch('/maintenance/{maintenance}', [MaintenanceController::class, 'update'])->middleware('role:admin,manager')->name('maintenance.update');
 
-    Route::get('/reports', [ReportController::class, 'index'])
-        ->name('reports.index');
-    Route::get('/reports/devices.csv', [ReportController::class, 'devices'])
-        ->name('reports.devices');
-    Route::get('/reports/assignments.csv', [ReportController::class, 'assignments'])
-        ->name('reports.assignments');
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports/devices.csv', [ReportController::class, 'devices'])->name('reports.devices');
+    Route::get('/reports/assignments.csv', [ReportController::class, 'assignments'])->name('reports.assignments');
     Route::view('/settings', 'placeholder', ['pageTitle' => 'Settings', 'pageDescription' => 'Configure your AssetFlow workspace.'])->name('settings.index');
     Route::get('/update', fn () => redirect()->route('devices.index'))->name('update');
     Route::get('/check', fn () => redirect()->route('devices.index'))->name('check');

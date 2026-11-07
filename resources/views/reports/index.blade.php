@@ -17,6 +17,10 @@
  </div>
  <p style="font-size:10px;color:#8994a8;margin:12px 0 0">CSV files can be opened in Microsoft Excel, Google Sheets or LibreOffice Calc.</p>
 </div>
+<div class="grid-2" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-bottom:20px">
+ <div class="panel" style="padding:22px;min-width:0"><h2 style="font-size:15px;margin:0 0 15px">Inventory distribution</h2><div style="height:260px"><canvas id="statusChart" aria-label="Device inventory by status"></canvas></div></div>
+ <div class="panel" style="padding:22px;min-width:0"><h2 style="font-size:15px;margin:0 0 15px">New devices by month</h2><div style="height:260px"><canvas id="monthlyChart" aria-label="Devices registered in the last six months"></canvas></div></div>
+</div>
 <div class="panel" style="padding:22px;margin-bottom:20px">
  <h2 style="font-size:15px;margin:0 0 15px">Inventory by status</h2>
  @php($total = max(1, array_sum($deviceStats->toArray())))
@@ -33,4 +37,31 @@
  @forelse($categoryStats as $row)<tr><td>{{ $row->category }}</td><td>{{ $row->total }}</td></tr>@empty<tr><td colspan="2">No device data available.</td></tr>@endforelse
  </tbody></table></div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const statusLabels = ['Available', 'Assigned', 'Maintenance', 'Retired'];
+    const statusValues = @json([
+        (int) ($deviceStats['available'] ?? 0),
+        (int) ($deviceStats['assigned'] ?? 0),
+        (int) ($deviceStats['maintenance'] ?? 0),
+        (int) ($deviceStats['retired'] ?? 0),
+    ]);
+    const monthlyLabels = @json($monthlyDevices->pluck('label')->values());
+    const monthlyValues = @json($monthlyDevices->pluck('total')->values());
+    if (window.Chart) {
+        new Chart(document.getElementById('statusChart'), {
+            type: 'doughnut',
+            data: { labels: statusLabels, datasets: [{ data: statusValues, borderWidth: 0, hoverOffset: 7 }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, cutout: '68%' }
+        });
+        new Chart(document.getElementById('monthlyChart'), {
+            type: 'bar',
+            data: { labels: monthlyLabels, datasets: [{ label: 'New devices', data: monthlyValues, borderRadius: 6 }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+        });
+    }
+});
+</script>
+<style>@media(max-width:800px){.grid-2{grid-template-columns:1fr!important}}</style>
 @endsection
