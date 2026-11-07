@@ -7,6 +7,8 @@ use App\Http\Controllers\DeviceAssignmentController;
 use App\Http\Controllers\DeviceController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\UserManagementController;
+use App\Http\Controllers\MaintenanceController;
+use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -58,8 +60,21 @@ Route::middleware(['auth', 'active', 'audit'])->group(function () {
         Route::get('/audit-logs', [AuditLogController::class, 'index'])->name('audit.index');
     });
 
-    Route::view('/maintenance', 'placeholder', ['pageTitle' => 'Maintenance', 'pageDescription' => 'Track repairs, service schedules and maintenance history.'])->name('maintenance.index');
-    Route::view('/reports', 'placeholder', ['pageTitle' => 'Reports', 'pageDescription' => 'Reports and exports will be available in a later phase.'])->name('reports.index');
+    Route::get('/maintenance', [MaintenanceController::class, 'index'])
+        ->name('maintenance.index');
+    Route::post('/maintenance', [MaintenanceController::class, 'store'])
+        ->middleware('role:admin,manager')
+        ->name('maintenance.store');
+    Route::patch('/maintenance/{maintenance}', [MaintenanceController::class, 'update'])
+        ->middleware('role:admin,manager')
+        ->name('maintenance.update');
+
+    Route::get('/reports', [ReportController::class, 'index'])
+        ->name('reports.index');
+    Route::get('/reports/devices.csv', [ReportController::class, 'devices'])
+        ->name('reports.devices');
+    Route::get('/reports/assignments.csv', [ReportController::class, 'assignments'])
+        ->name('reports.assignments');
     Route::view('/settings', 'placeholder', ['pageTitle' => 'Settings', 'pageDescription' => 'Configure your AssetFlow workspace.'])->name('settings.index');
     Route::get('/update', fn () => redirect()->route('devices.index'))->name('update');
     Route::get('/check', fn () => redirect()->route('devices.index'))->name('check');
