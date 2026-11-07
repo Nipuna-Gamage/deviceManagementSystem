@@ -23,7 +23,9 @@ it('renders a useful empty dashboard state', function () {
         ->assertOk()
         ->assertSee('Your inventory is ready for its first device')
         ->assertSee(route('devices.index'))
-        ->assertSee('No recent activity yet');
+        ->assertSee('No recent activity yet')
+        ->assertDontSee('Need a hand?')
+        ->assertDontSee('Explore workspace');
 });
 
 it('renders live dashboard data and working status links', function () {
