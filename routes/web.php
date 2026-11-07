@@ -36,7 +36,23 @@ Route::middleware(['auth', 'active', 'audit'])->group(function () {
             $month = now()->startOfMonth()->subMonths($monthsAgo);
             return ['label' => $month->format('M'), 'total' => \App\Models\Device::whereYear('created_at', $month->year)->whereMonth('created_at', $month->month)->count()];
         });
-        return view('home', compact('totalDevices', 'availableDevices', 'assignedDevices', 'maintenanceDevices', 'recentDevices', 'dashboardStatusStats', 'dashboardMonthlyStats'));
+        $dashboardStatusChartData = collect(['available', 'assigned', 'maintenance', 'retired'])
+            ->map(fn (string $status): int => (int) ($dashboardStatusStats[$status] ?? 0))
+            ->values()
+            ->all();
+        $dashboardMonthlyLabels = $dashboardMonthlyStats->pluck('label')->values()->all();
+        $dashboardMonthlyChartData = $dashboardMonthlyStats->pluck('total')->values()->all();
+
+        return view('home', compact(
+            'totalDevices',
+            'availableDevices',
+            'assignedDevices',
+            'maintenanceDevices',
+            'recentDevices',
+            'dashboardStatusChartData',
+            'dashboardMonthlyLabels',
+            'dashboardMonthlyChartData',
+        ));
     })->name('home');
 
     Route::get('/devices/register', [DeviceController::class, 'create'])->name('register');

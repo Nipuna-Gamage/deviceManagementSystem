@@ -28,7 +28,24 @@ class ReportController extends Controller
                 'total' => Device::whereYear('created_at', $month->year)->whereMonth('created_at', $month->month)->count(),
             ];
         });
-        return view('reports.index', compact('deviceStats', 'categoryStats', 'maintenanceCost', 'activeEmployees', 'activeAssignments', 'recentMaintenance', 'monthlyDevices'));
+        $statusChartData = collect(['available', 'assigned', 'maintenance', 'retired'])
+            ->map(fn (string $status): int => (int) ($deviceStats[$status] ?? 0))
+            ->values()
+            ->all();
+        $monthlyChartLabels = $monthlyDevices->pluck('label')->values()->all();
+        $monthlyChartData = $monthlyDevices->pluck('total')->values()->all();
+
+        return view('reports.index', compact(
+            'deviceStats',
+            'categoryStats',
+            'maintenanceCost',
+            'activeEmployees',
+            'activeAssignments',
+            'recentMaintenance',
+            'statusChartData',
+            'monthlyChartLabels',
+            'monthlyChartData',
+        ));
     }
 
     public function devices(): StreamedResponse

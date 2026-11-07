@@ -36,12 +36,12 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!window.Chart) return;
     new Chart(document.getElementById('homeStatusChart'), {
         type: 'doughnut',
-        data: { labels: ['Available','Assigned','Maintenance','Retired'], datasets: [{ data: @json([(int)($dashboardStatusStats['available'] ?? 0),(int)($dashboardStatusStats['assigned'] ?? 0),(int)($dashboardStatusStats['maintenance'] ?? 0),(int)($dashboardStatusStats['retired'] ?? 0)]), borderWidth: 0 }] },
+        data: { labels: ['Available','Assigned','Maintenance','Retired'], datasets: [{ data: @json($dashboardStatusChartData), borderWidth: 0 }] },
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, cutout: '65%' }
     });
     new Chart(document.getElementById('homeMonthlyChart'), {
         type: 'line',
-        data: { labels: @json($dashboardMonthlyStats->pluck('label')->values()), datasets: [{ label: 'Devices', data: @json($dashboardMonthlyStats->pluck('total')->values()), tension: .35, fill: true }] },
+        data: { labels: @json($dashboardMonthlyLabels), datasets: [{ label: 'Devices', data: @json($dashboardMonthlyChartData), tension: .35, fill: true }] },
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
     });
 });

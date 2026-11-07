@@ -41,14 +41,9 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const statusLabels = ['Available', 'Assigned', 'Maintenance', 'Retired'];
-    const statusValues = @json([
-        (int) ($deviceStats['available'] ?? 0),
-        (int) ($deviceStats['assigned'] ?? 0),
-        (int) ($deviceStats['maintenance'] ?? 0),
-        (int) ($deviceStats['retired'] ?? 0),
-    ]);
-    const monthlyLabels = @json($monthlyDevices->pluck('label')->values());
-    const monthlyValues = @json($monthlyDevices->pluck('total')->values());
+    const statusValues = @json($statusChartData);
+    const monthlyLabels = @json($monthlyChartLabels);
+    const monthlyValues = @json($monthlyChartData);
     if (window.Chart) {
         new Chart(document.getElementById('statusChart'), {
             type: 'doughnut',
