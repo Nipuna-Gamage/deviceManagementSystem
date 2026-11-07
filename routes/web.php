@@ -12,6 +12,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\GlobalSearchController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -26,35 +27,7 @@ Route::middleware(['auth', 'active', 'audit'])->group(function () {
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.read-all');
 
-    Route::get('/', function () {
-        $totalDevices = \App\Models\Device::count();
-        $availableDevices = \App\Models\Device::where('status', 'available')->count();
-        $assignedDevices = \App\Models\Device::where('status', 'assigned')->count();
-        $maintenanceDevices = \App\Models\Device::where('status', 'maintenance')->count();
-        $recentDevices = \App\Models\Device::with('activeAssignment.employee')->latest()->limit(5)->get();
-        $dashboardStatusStats = \App\Models\Device::query()->select('status')->selectRaw('count(*) as total')->groupBy('status')->pluck('total', 'status');
-        $dashboardMonthlyStats = collect(range(5, 0))->map(function ($monthsAgo) {
-            $month = now()->startOfMonth()->subMonths($monthsAgo);
-            return ['label' => $month->format('M'), 'total' => \App\Models\Device::whereYear('created_at', $month->year)->whereMonth('created_at', $month->month)->count()];
-        });
-        $dashboardStatusChartData = collect(['available', 'assigned', 'maintenance', 'retired'])
-            ->map(fn (string $status): int => (int) ($dashboardStatusStats[$status] ?? 0))
-            ->values()
-            ->all();
-        $dashboardMonthlyLabels = $dashboardMonthlyStats->pluck('label')->values()->all();
-        $dashboardMonthlyChartData = $dashboardMonthlyStats->pluck('total')->values()->all();
-
-        return view('home', compact(
-            'totalDevices',
-            'availableDevices',
-            'assignedDevices',
-            'maintenanceDevices',
-            'recentDevices',
-            'dashboardStatusChartData',
-            'dashboardMonthlyLabels',
-            'dashboardMonthlyChartData',
-        ));
-    })->name('home');
+    Route::get('/', [DashboardController::class, 'index'])->name('home');
 
     Route::get('/devices/register', [DeviceController::class, 'create'])->name('register');
     Route::post('/devices/register', [DeviceController::class, 'store'])->middleware('role:admin,manager')->name('register.store');
